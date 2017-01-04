@@ -1,44 +1,23 @@
 <?php
 namespace Enqueue\Consumption;
 
-use Enqueue\Psr\Message;
+use Enqueue\Psr\Message as PsrMessage;
+use Enqueue\Psr\Result as PsrResult;
 
-class Result
+class Result extends PsrResult
 {
-    /**
-     * Use this constant when the message is processed successfully and the message could be removed from the queue.
-     */
-    const ACK = 'enqueue.message_queue.consumption.ack';
-
-    /**
-     * Use this constant when the message is not valid or could not be processed
-     * The message is removed from the queue.
-     */
-    const REJECT = 'enqueue.message_queue.consumption.reject';
-
-    /**
-     * Use this constant when the message is not valid or could not be processed right now but we can try again later
-     * The original message is removed from the queue but a copy is publsihed to the queue again.
-     */
-    const REQUEUE = 'enqueue.message_queue.consumption.requeue';
-
-    /**
-     * @var string
-     */
-    private $status;
-
     /**
      * @var string
      */
     private $reason;
 
     /**
-     * @var Message|null
+     * @var PsrMessage|null
      */
     private $reply;
 
     /**
-     * @return Message|null
+     * @return PsrMessage|null
      */
     public function getReply()
     {
@@ -46,9 +25,9 @@ class Result
     }
 
     /**
-     * @param Message|null $reply
+     * @param PsrMessage|null $reply
      */
-    public function setReply(Message $reply = null)
+    public function setReply(PsrMessage $reply = null)
     {
         $this->reply = $reply;
     }
@@ -59,16 +38,9 @@ class Result
      */
     public function __construct($status, $reason = '')
     {
-        $this->status = (string) $status;
-        $this->reason = (string) $reason;
-    }
+        parent::__construct($status);
 
-    /**
-     * @return string
-     */
-    public function getStatus()
-    {
-        return $this->status;
+        $this->reason = (string) $reason;
     }
 
     /**
@@ -110,24 +82,16 @@ class Result
     }
 
     /**
-     * @param Message     $replyMessage
+     * @param PsrMessage  $replyMessage
      * @param string|null $reason
      *
      * @return Result
      */
-    public static function reply(Message $replyMessage, $reason = '')
+    public static function reply(PsrMessage $replyMessage, $reason = '')
     {
         $result = static::ack($reason);
         $result->setReply($replyMessage);
 
         return $result;
-    }
-
-    /**
-     * @return string
-     */
-    public function __toString()
-    {
-        return $this->status;
     }
 }

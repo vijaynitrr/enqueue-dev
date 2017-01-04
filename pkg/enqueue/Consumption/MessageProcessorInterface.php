@@ -1,16 +1,11 @@
 <?php
 namespace Enqueue\Consumption;
 
-use Enqueue\Psr\Context as PsrContext;
-use Enqueue\Psr\Message as PsrMessage;
+use Enqueue\Psr\MessageProcessor;
 
-interface MessageProcessorInterface
+/**
+ * @deprecated
+ */
+interface MessageProcessorInterface extends MessageProcessor
 {
-    /**
-     * @param PsrMessage $message
-     * @param PsrContext $context
-     *
-     * @return string
-     */
-    public function process(PsrMessage $message, PsrContext $context);
 }
